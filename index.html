@@ -1,0 +1,77 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Research</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.0.7/tailwind.min.css" integrity="sha512-+xqjjG83VjODzzvOgxqEBRQcETzLY4euDxTFOOVqOF/ruaeN3IQe0IoWNrUMfmJGWIzFdX8WlIYbBamMQNhCA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://unpkg.com/@babel/standalone@7.18.3/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js" integrity="sha512-mVj8ZKkWqy1J8sQY8F+P7vZMwA1uI4RfKJU9KoZr6F7Hv0z0a2iI8JrQ3wUQYq6nKoB3aQwY4ZmJ6n8x+K4j7Dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js" integrity="sha512-mwWUjUTMz1iQ7x3x5r6k7aK5Kv7z8fQx+6h8h9+J5x6f3w5lJ0sEgXwzV6R6rj9KwqXuUQg8mUW8m3zg2z7WcA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        class App extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    aiAgents: [],
+                    isLoading: false,
+                    error: null,
+                }
+            }
+
+            componentDidMount() {
+                this.setState({ isLoading: true });
+                fetch('/ai-agents')
+                    .then(response => response.json())
+                    .then(data => this.setState({ aiAgents: data, isLoading: false }))
+                    .catch(error => this.setState({ error, isLoading: false }));
+            }
+
+            renderAiAgents = () => {
+                return this.state.aiAgents.map((agent, index) => (
+                    <div key={index} className="bg-white rounded-lg shadow-md p-4 my-4">
+                        <h2 className="text-lg font-bold">{agent.name}</h2>
+                        <p className="text-gray-600">{agent.description}</p>
+                        <p className="text-gray-600">{agent.link}</p>
+                    </div>
+                ));
+            }
+
+            render() {
+                if (this.state.isLoading) {
+                    return (
+                        <div className="flex justify-center items-center h-screen">
+                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
+                        </div>
+                    );
+                } else if (this.state.error) {
+                    return (
+                        <div className="flex justify-center items-center h-screen text-red-500">
+                            <p>Error: {this.state.error.message}</p>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                            {this.renderAiAgents()}
+                        </div>
+                    );
+                }
+            }
+        }
+
+        ReactDOM.render(
+            <React.StrictMode>
+                <App />
+            </React.StrictMode>,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
+```
